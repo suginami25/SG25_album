@@ -1,0 +1,72 @@
+<!--
+ファイル名            : index.html
+バージョン            : v0.7.3
+作成日・更新日        : 2025-12-01 / 2025-12-01
+保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/web/
+実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator" && python3 wise_corefile_fix_generator_v0.7.3.py
+役割                  : 同期会アルバムビューア用コアファイル（WISE版）。
+参照ファイル・バージョン : wise_corefile_fix_generator_v0.7.3
+注意                  : 本ファイルは generator/core_fixed に生成される候補版です。
+                         必要に応じて WISE/web のコアファイルと手動で差し替えてください。
+-->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>同期会アルバムビューア</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="photos_index.js"></script>
+  <script defer src="viewer.js"></script>
+</head>
+<body>
+  <!-- ヘッダ：黒帯＋校章ロゴ＋中央寄せタイトル -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <img
+        src="assets/logo_suginami.jpg"
+        alt="杉並高校 校章"
+        class="app-logo"
+      />
+      <span class="app-title-text">2025年杉並高校25期同期会アルバム</span>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- 第1画面：カテゴリ一覧（メインボタン群を中央配置） -->
+    <section id="screen-category" class="screen screen-active">
+      <div class="category-screen-inner">
+        <h2 class="screen-title screen-title-center">カテゴリを選んでください</h2>
+        <div id="category-list" class="category-list"></div>
+      </div>
+    </section>
+
+    <!-- 第2画面：サムネイル一覧（カテゴリ配下をグループごと） -->
+    <section id="screen-gallery" class="screen screen-hidden">
+      <h2 id="gallery-title" class="screen-title"></h2>
+      <div id="gallery-container" class="gallery-container"></div>
+    </section>
+
+ <!-- 第3画面：拡大表示 -->
+<section id="screen-viewer" class="screen screen-hidden">
+
+  <!-- ★ 第3画面専用の「閉じる」ボタンは不要のため削除 -->
+  <div class="viewer-header"></div>
+
+  <div class="viewer-body">
+    <img id="viewer-image" class="viewer-image" src="" alt="" />
+    <p id="viewer-filename" class="viewer-filename"></p>
+    <p id="viewer-context" class="viewer-context"></p>
+  </div>
+
+  <!-- ★ 右下に固定表示される「戻る（🔙）」ボタン -->
+  <div class="back-button">🔙</div>
+
+</section>
+  </main>
+
+  <!-- 共通：左下固定の🏠ボタン（第2・第3画面用） -->
+  <button id="home-button" type="button" class="home-button">🏠</button>
+</body>
+</html>
