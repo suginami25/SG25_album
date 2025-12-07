@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.5  (カテゴリ2行表示＋右クリック抑止・タッチ操作改善版)
+// バージョン           : v0.9.6
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-07  (画像右クリック抑止を維持しつつ、タップ／スクロール不具合を解消)
+// 更新日               : 2025-12-07  (第2・第3画面の画像を background-image 化して長押し保存を抑止)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -49,9 +49,9 @@
 //                     }
 //                   }
 //
-// バージョン     : v0.9.0 (Paging+Nav)
+// バージョン     : v0.9.6 (Paging+Nav + 長押し抑止用 background-image 化)
 // 作成日         : 2025-11-22
-// 更新日         : 2025-11-24
+// 更新日         : 2025-12-07
 //   - 第3画面 context 表示を
 //       「カテゴリ / グループ名 / サブフォルダID(任意)」に統一
 //   - サブフォルダID が "X" の場合は context に表示しない
@@ -95,6 +95,7 @@
   let galleryContainer;
 
   let viewerImage;
+  let viewerImageCover; // 第3画面用：画像保存抑止用のオーバーレイ
   let viewerFilename;
   let viewerContext;
   let viewerCloseButton;
@@ -171,7 +172,36 @@
     return blocks;
   }
 
+  
   // ----------------------------------------------------------
+  // 第3画面用：viewerImage の上に background-image ベースの
+  // オーバーレイ（viewerImageCover）を載せる
+  // ----------------------------------------------------------
+  function setupViewerImageCover() {
+    if (!viewerImage) return;
+    const parent = viewerImage.parentElement;
+    if (!parent) return;
+
+    // ラッパーを相対配置に
+    const currentPosition = window.getComputedStyle(parent).position;
+    if (!currentPosition || currentPosition === "static") {
+      parent.style.position = "relative";
+    }
+
+    // 既に作っていれば再利用
+    if (!viewerImageCover) {
+      viewerImageCover = document.createElement("div");
+      viewerImageCover.id = "viewer-image-cover";
+      viewerImageCover.className = "viewer-image-cover";
+      parent.appendChild(viewerImageCover);
+    }
+
+    // img 自体は視覚的には非表示＋イベントを受けない状態に
+    viewerImage.style.opacity = "0";
+    viewerImage.style.pointerEvents = "none";
+  }
+
+// ----------------------------------------------------------
   // 画面切替
   // ----------------------------------------------------------
 
@@ -203,7 +233,6 @@
     if (homeButton) {
       homeButton.style.display = name === "category" ? "none" : "block";
     }
-
     if (backButton) {
       backButton.style.display = name === "viewer" ? "block" : "none";
     }
@@ -282,19 +311,10 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "category-card";
-
-      // 強制2行表示：
-      //  1行目 : カテゴリ名
-      //  2行目 : （○○枚）
-      if (total > 0) {
-        btn.innerHTML =
-          `<span class="category-label">${displayTitle}</span>` +
-          `<span class="category-count">（${total}枚）</span>`;
-      } else {
-        btn.innerHTML =
-          `<span class="category-label">${displayTitle}</span>` +
-          `<span class="category-count">（0枚）</span>`;
-      }
+      btn.innerHTML =
+        total > 0
+          ? `<span class="category-label">${displayTitle}</span><span class="category-count">（${total}枚）</span>`
+          : `<span class="category-label">${displayTitle}</span>`;
 
       btn.addEventListener("click", () => {
         currentCategoryKey = catKey;
@@ -433,14 +453,15 @@ function renderGalleryPage() {
         const t = document.createElement("div");
         t.className = "thumb";
 
-        const img = document.createElement("img");
-        img.src = photo.src;
+        const thumbImage = document.createElement("div");
+        thumbImage.className = "thumb-image";
+        thumbImage.style.backgroundImage = `url(${photo.src})`;
 
         const file = document.createElement("div");
         file.className = "thumb-filename";
         file.textContent = formatDisplayFilename(photo.filename);
 
-        t.appendChild(img);
+        t.appendChild(thumbImage);
         t.appendChild(file);
 
         t.addEventListener("click", () => {
@@ -541,8 +562,13 @@ function openGalleryForCategory(catKey) {
     currentPhotoIndex = photoIndex;
 
     // 表示画像
-    viewerImage.src = photo.src;
-    viewerImage.alt = photo.filename || "";
+    if (viewerImageCover) {
+      viewerImageCover.style.backgroundImage = `url(${photo.src})`;
+    }
+    if (viewerImage) {
+      viewerImage.src = photo.src;
+      viewerImage.alt = photo.filename || "";
+    }
 
     // カテゴリ名（番号除去）
     const displayTitle = formatCategoryTitle(cat.title, catKey);
@@ -626,6 +652,9 @@ function openGalleryForCategory(catKey) {
 
     viewerImage = document.getElementById("viewer-image");
     viewerFilename = document.getElementById("viewer-filename");
+
+    // 第3画面用オーバーレイをセットアップ（background-image で表示）
+    setupViewerImageCover();
     viewerContext = document.getElementById("viewer-context");
     viewerCloseButton = document.getElementById("viewer-close-button");
 
@@ -675,69 +704,9 @@ function openGalleryForCategory(catKey) {
     showScreen("category");
   }
 
-
-  // ----------------------------------------------------------
-  // 画像要素に対する長押し・右クリック抑止ロジック
-  //   - PC: contextmenu（右クリックメニュー）抑止
-  //   - モバイル: touchstart / touchend / touchmove を抑止して長押しを「しづらく」する
-  //   - MutationObserver で Lazy Load 等で追加された <img> にも追随
-  // ----------------------------------------------------------
-  function protectImage(img) {
-    if (!img || img.dataset.touchProtectApplied === "1") return;
-    img.dataset.touchProtectApplied = "1";
-
-    // 画像上でのコンテキストメニュー（長押しメニュー含む）を抑止
-    img.addEventListener("contextmenu", function (e) {
-      e.preventDefault();
-    });
-
-    // 画像のドラッグ＆ドロップ保存を抑止
-    img.addEventListener("dragstart", function (e) {
-      e.preventDefault();
-    });
-  }
-
-
-function protectExistingImages() {
-    var imgs = document.querySelectorAll("img");
-    imgs.forEach(function (img) {
-      protectImage(img);
-    });
-  }
-
-  function observeNewImages() {
-    if (!("MutationObserver" in window)) return;
-
-    var observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        mutation.addedNodes.forEach(function (node) {
-          if (node.nodeType !== 1) return; // ELEMENT_NODE 以外は無視
-
-          if (node.tagName && node.tagName.toLowerCase() === "img") {
-            protectImage(node);
-          } else if (node.querySelectorAll) {
-            var imgs = node.querySelectorAll("img");
-            imgs.forEach(function (img) {
-              protectImage(img);
-            });
-          }
-        });
-      });
-    });
-
-    observer.observe(document.documentElement || document.body, {
-      childList: true,
-      subtree: true
-    });
-  }
-
   document.addEventListener("DOMContentLoaded", function () {
     // 既存の初期化処理
     init();
-
-    // 画像保護ロジック（既存画像＋今後追加される画像）
-    protectExistingImages();
-    observeNewImages();
 
     // 全画面共通：右クリック（コンテキストメニュー）を抑止（キャプチャフェーズ）
     document.addEventListener("contextmenu", function (event) {
