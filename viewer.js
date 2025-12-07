@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.3  (モバイル長押し抑止ロジック統合版)
+// バージョン           : v0.9.5  (カテゴリ2行表示＋右クリック抑止・タッチ操作改善版)
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-07  (右クリック＋ドラッグ＋モバイル長押し抑止 強化版)
+// 更新日               : 2025-12-07  (画像右クリック抑止を維持しつつ、タップ／スクロール不具合を解消)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -204,6 +204,10 @@
       homeButton.style.display = name === "category" ? "none" : "block";
     }
 
+    if (backButton) {
+      backButton.style.display = name === "viewer" ? "block" : "none";
+    }
+
     updateGalleryNavVisibility();
   }
 
@@ -278,8 +282,19 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "category-card";
-      btn.textContent =
-        total > 0 ? `${displayTitle}（${total}枚）` : displayTitle;
+
+      // 強制2行表示：
+      //  1行目 : カテゴリ名
+      //  2行目 : （○○枚）
+      if (total > 0) {
+        btn.innerHTML =
+          `<span class="category-label">${displayTitle}</span>` +
+          `<span class="category-count">（${total}枚）</span>`;
+      } else {
+        btn.innerHTML =
+          `<span class="category-label">${displayTitle}</span>` +
+          `<span class="category-count">（0枚）</span>`;
+      }
 
       btn.addEventListener("click", () => {
         currentCategoryKey = catKey;
@@ -671,30 +686,19 @@ function openGalleryForCategory(catKey) {
     if (!img || img.dataset.touchProtectApplied === "1") return;
     img.dataset.touchProtectApplied = "1";
 
+    // 画像上でのコンテキストメニュー（長押しメニュー含む）を抑止
     img.addEventListener("contextmenu", function (e) {
       e.preventDefault();
     });
 
-    var onTouch = function (e) {
-      try {
-        if (e.touches && e.touches.length === 1) {
-          e.preventDefault();
-        }
-      } catch (err) {
-        // 失敗しても致命的ではないので黙殺
-      }
-    };
-
-    img.addEventListener("touchstart", onTouch, { passive: false });
-    img.addEventListener("touchend", onTouch, { passive: false });
-    img.addEventListener("touchmove", onTouch, { passive: false });
-
+    // 画像のドラッグ＆ドロップ保存を抑止
     img.addEventListener("dragstart", function (e) {
       e.preventDefault();
     });
   }
 
-  function protectExistingImages() {
+
+function protectExistingImages() {
     var imgs = document.querySelectorAll("img");
     imgs.forEach(function (img) {
       protectImage(img);

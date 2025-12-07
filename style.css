@@ -1,21 +1,23 @@
 /*
 ファイル名           : style.css
-バージョン           : v0.9.5  (犬＋🏠＋犬ナビのサイズ調整版)
+バージョン           : v0.9.6  (犬ナビ＋カテゴリ2行表示＋長押し抑止対応版)
 作成日               : 2025-12-01
 更新日               : 2025-12-07
 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
 実行方法（この1行をターミナルにコピペすればOK）:
-  cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator" && python3 WISE_web_corefile_generator_v1.0.1.py
+                       cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
 前提フォルダ構成     :
-  /Users/yoichiamano/Projects/Album_Viewer/photo_data
-  /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本
-  /Users/yoichiamano/Projects/Album_Viewer/WISE/web
+                       /Users/yoichiamano/Projects/Album_Viewer/
+                         ├── photo_data
+                         └── WISE/
+                             ├── generator/
+                             │    └── WEB公開用正本/ （本ファイルを配置）
+                             └── web/               （generator 実行時の出力先）
 注意事項             :
-  - 本ファイルは SG25 Photo Archive Platform（WISE版）の公開用スタイルシート正本です。
-  - 直接編集した場合は generator 実行後に WISE/web および SG25_album へ反映してください。
-  - 画像の長押し・右クリック抑制スタイルを含みますが、OSレベルの保存動作を完全に防ぐことはできません。
+                       - 本ファイルは SG25 Photo Archive Platform（SG25-PAP）用の公開コアCSSです。
+                       - 内容を変更した場合は WISE_web_corefile_generator_v1.0.1.py を再実行し、
+                         /WISE/web 配下のコアファイルを再生成してください。
 */
-
 
 *,
 *::before,
@@ -128,6 +130,13 @@ body {
   text-align: center;
   box-shadow: 0 4px 8px rgba(0,0,0,0.12);
   transition: 0.1s ease;
+
+  /* 強制2行表示用レイアウト（上下・左右とも中央寄せ） */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
 }
 
 .category-card:hover {
@@ -337,22 +346,18 @@ body {
   }
 }
 
-/* ---------------------------------------------
-   モバイル向け：画像の長押しメニュー抑制スタイル
-   （スマホでの画像保存を「しづらく」するための指定）
---------------------------------------------- */
-img,
-.thumb img,
-.viewer-image {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
+
+/* ----------------------------------------------------------
+   カテゴリカード内テキスト（1行目:ラベル／2行目:枚数）
+---------------------------------------------------------- */
+.category-label,
+.category-count {
+  display: block;
 }
 
 /* ----------------------------------------------------------
    第2画面フッター：犬＋🏠＋犬 ナビゲーションボタン
    - viewer.js が生成する .gallery-page-nav / .gallery-nav-button 用
-   - 左下の 🏠 ボタン (.home-button) と同等サイズ
 ---------------------------------------------------------- */
 .gallery-page-nav {
   display: flex;
@@ -375,7 +380,6 @@ img,
   cursor: pointer;
 }
 
-/* スマホ幅では少しだけ余白を広めに */
 @media (max-width: 768px) {
   .gallery-page-nav {
     gap: 20px;
