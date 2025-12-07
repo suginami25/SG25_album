@@ -1,14 +1,16 @@
 /*
 ファイル名            : style.css
-バージョン            : v0.7.3
-作成日・更新日        : 2025-12-01 / 2025-12-01
-保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/web/
-実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator" && python3 wise_corefile_fix_generator_v0.7.3.py
-役割                  : 同期会アルバムビューア用コアファイル（WISE版）。
-参照ファイル・バージョン : wise_corefile_fix_generator_v0.7.3
-注意                  : 本ファイルは generator/core_fixed に生成される候補版です。
-                         必要に応じて WISE/web のコアファイルと手動で差し替えてください。
+バージョン            : v0.9.3
+作成日・更新日        : 2025-12-07  (右クリック・長押し抑止＋Lazy Load 対応)
+保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
+実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
+役割                  : SG25 Photo Archive Platform（SG25-PAP）用 三画面アルバムビューア（WISE版）のスタイル定義。
+参照ファイル・バージョン : v0.9.2
+注意                  : 本ファイルは WISE/generator/WEB公開用正本/ における「WEB公開用正本」です。
+                         公開時は PUBL または SG25_album 側にディレクトリごとコピーして利用してください。
+                         仕様変更時はバージョン・更新日・本コメント内容も必ず見直してください。
 */
+
 
 *,
 *::before,
@@ -145,6 +147,43 @@ body {
   font-weight: bold;
 }
 
+/* サブグループ（subID）タイトル：■ 1.0.1 など */
+.gallery-subgroup-title {
+  margin: 0.4rem 0 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+}
+
+/* 第2画面用：犬＋🏠＋犬 ナビ（ページ数が2ページ以上のときだけ JS から表示） */
+.gallery-page-nav {
+  display: none; /* JS からの制御が基本 */
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 2001;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 犬ボタン＋中央🏠 ボタン共通スタイル */
+.gallery-nav-button {
+  font-size: 1.8rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid #ccc;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+
+.gallery-nav-button:active {
+  transform: scale(0.96);
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -172,6 +211,12 @@ body {
   aspect-ratio: 1/1;
   object-fit: contain;
   background: #fff;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.thumb img.lazy-loaded {
+  opacity: 1;
 }
 
 .thumb-filename {
@@ -328,4 +373,23 @@ body {
   .category-card {
     width: 100%;
   }
+}
+
+/* --------------------------------------------------
+   右クリック／長押しでの保存をしづらくするための設定
+   （コンテンツ保護ではなく「抑止」を目的とした軽い対策）
+   -------------------------------------------------- */
+
+body,
+#screen-category,
+#screen-gallery,
+#screen-viewer,
+.thumb,
+.thumb img,
+#viewer-image {
+  -webkit-touch-callout: none; /* iOS Safari: 長押しメニュー抑止 */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
