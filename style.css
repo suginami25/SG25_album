@@ -1,8 +1,8 @@
 /*
 ファイル名           : style.css
-バージョン           : v0.9.6  (犬ナビ＋カテゴリ2行表示＋長押し抑止対応版)
+バージョン           : v0.9.7  (犬ナビ＋カテゴリ2行表示＋長押し抑止＋pointer-events 追加版)
 作成日               : 2025-12-01
-更新日               : 2025-12-07
+更新日               : 2025-12-07  / pointer-events 追加
 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
 実行方法（この1行をターミナルにコピペすればOK）:
                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -384,4 +384,12 @@ body {
   .gallery-page-nav {
     gap: 20px;
   }
+}
+
+/* ----------------------------------------------------------
+   画像要素の直接操作を少し抑止（長押しでの保存メニューを出にくくする）
+   ---------------------------------------------------------- */
+.thumb img,
+#viewer-image {
+  pointer-events: none;
 }
