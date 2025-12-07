@@ -1,14 +1,19 @@
 /*
-ファイル名            : style.css
-バージョン            : v0.9.3
-作成日・更新日        : 2025-12-07  (右クリック・長押し抑止＋Lazy Load 対応)
-保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
-実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
-役割                  : SG25 Photo Archive Platform（SG25-PAP）用 三画面アルバムビューア（WISE版）のスタイル定義。
-参照ファイル・バージョン : v0.9.2
-注意                  : 本ファイルは WISE/generator/WEB公開用正本/ における「WEB公開用正本」です。
-                         公開時は PUBL または SG25_album 側にディレクトリごとコピーして利用してください。
-                         仕様変更時はバージョン・更新日・本コメント内容も必ず見直してください。
+ファイル名           : style.css
+バージョン           : v0.9.5  (犬＋🏠＋犬ナビのサイズ調整版)
+作成日               : 2025-12-01
+更新日               : 2025-12-07
+保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
+実行方法（この1行をターミナルにコピペすればOK）:
+  cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator" && python3 WISE_web_corefile_generator_v1.0.1.py
+前提フォルダ構成     :
+  /Users/yoichiamano/Projects/Album_Viewer/photo_data
+  /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本
+  /Users/yoichiamano/Projects/Album_Viewer/WISE/web
+注意事項             :
+  - 本ファイルは SG25 Photo Archive Platform（WISE版）の公開用スタイルシート正本です。
+  - 直接編集した場合は generator 実行後に WISE/web および SG25_album へ反映してください。
+  - 画像の長押し・右クリック抑制スタイルを含みますが、OSレベルの保存動作を完全に防ぐことはできません。
 */
 
 
@@ -147,43 +152,6 @@ body {
   font-weight: bold;
 }
 
-/* サブグループ（subID）タイトル：■ 1.0.1 など */
-.gallery-subgroup-title {
-  margin: 0.4rem 0 0.2rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #555;
-}
-
-/* 第2画面用：犬＋🏠＋犬 ナビ（ページ数が2ページ以上のときだけ JS から表示） */
-.gallery-page-nav {
-  display: none; /* JS からの制御が基本 */
-  position: fixed;
-  left: 50%;
-  bottom: 16px;
-  transform: translateX(-50%);
-  z-index: 2001;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 犬ボタン＋中央🏠 ボタン共通スタイル */
-.gallery-nav-button {
-  font-size: 1.8rem;
-  padding: 0.25rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid #ccc;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  cursor: pointer;
-}
-
-.gallery-nav-button:active {
-  transform: scale(0.96);
-}
-
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -211,12 +179,6 @@ body {
   aspect-ratio: 1/1;
   object-fit: contain;
   background: #fff;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.thumb img.lazy-loaded {
-  opacity: 1;
 }
 
 .thumb-filename {
@@ -375,21 +337,47 @@ body {
   }
 }
 
-/* --------------------------------------------------
-   右クリック／長押しでの保存をしづらくするための設定
-   （コンテンツ保護ではなく「抑止」を目的とした軽い対策）
-   -------------------------------------------------- */
-
-body,
-#screen-category,
-#screen-gallery,
-#screen-viewer,
-.thumb,
+/* ---------------------------------------------
+   モバイル向け：画像の長押しメニュー抑制スタイル
+   （スマホでの画像保存を「しづらく」するための指定）
+--------------------------------------------- */
+img,
 .thumb img,
-#viewer-image {
-  -webkit-touch-callout: none; /* iOS Safari: 長押しメニュー抑止 */
+.viewer-image {
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
+}
+
+/* ----------------------------------------------------------
+   第2画面フッター：犬＋🏠＋犬 ナビゲーションボタン
+   - viewer.js が生成する .gallery-page-nav / .gallery-nav-button 用
+   - 左下の 🏠 ボタン (.home-button) と同等サイズ
+---------------------------------------------------------- */
+.gallery-page-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.gallery-nav-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+/* スマホ幅では少しだけ余白を広めに */
+@media (max-width: 768px) {
+  .gallery-page-nav {
+    gap: 20px;
+  }
 }

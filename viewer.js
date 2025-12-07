@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.3
+// バージョン           : v0.9.3  (モバイル長押し抑止ロジック統合版)
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-07  (ページ分割＋犬ナビ＋右クリック抑止＋Lazy Load 対応版)
+// 更新日               : 2025-12-07  (右クリック＋ドラッグ＋モバイル長押し抑止 強化版)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -116,9 +116,6 @@
   let galleryHomeButton = null;
   let galleryNextButton = null;
 
-  // Lazy Load 用 IntersectionObserver
-  let lazyObserver = null;
-
   // ----------------------------------------------------------
   // 内部UI命名の正規表現
   //   <catID>.<grpID>.<subID>_<seq>.<ext>
@@ -174,49 +171,7 @@
     return blocks;
   }
 
-  
   // ----------------------------------------------------------
-  // Lazy Load 用ユーティリティ
-  //   - IntersectionObserver が使える環境では data-src を監視し、
-  //     画面内に入ったタイミングで実際の画像を読み込む。
-  //   - 非対応環境では通常どおり即時読み込み。
-  // ----------------------------------------------------------
-
-  function setupLazyObserver() {
-    if ("IntersectionObserver" in window) {
-      lazyObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const img = entry.target;
-          const src = img.getAttribute("data-src");
-          if (src) {
-            img.src = src;
-            img.removeAttribute("data-src");
-          }
-          img.classList.add("lazy-loaded");
-          observer.unobserve(img);
-        });
-      });
-    } else {
-      lazyObserver = null;
-    }
-  }
-
-  function registerLazyImage(img, src) {
-    if (lazyObserver) {
-      // レイアウトを維持するため 1x1 の透明ピクセルや空文字の src を使う手もあるが
-      // ここでは単純に data-src のみを持たせ、IntersectionObserver 発火時に読み込む。
-      img.setAttribute("data-src", src);
-      img.src = "";
-      lazyObserver.observe(img);
-    } else {
-      // Fallback: Lazy Load 非対応環境では即時読み込み
-      img.src = src;
-      img.classList.add("lazy-loaded");
-    }
-  }
-
-// ----------------------------------------------------------
   // 画面切替
   // ----------------------------------------------------------
 
@@ -393,11 +348,6 @@ function updateGalleryNavVisibility() {
 function renderGalleryPage() {
   if (!currentCategoryKey) return;
 
-  // 新しいページを描画する前に、前ページの監視対象をクリア
-  if (lazyObserver) {
-    lazyObserver.disconnect();
-  }
-
   const cat = window.PHOTOS_INDEX.categories[currentCategoryKey];
   if (!cat || !cat.groups) return;
 
@@ -469,7 +419,7 @@ function renderGalleryPage() {
         t.className = "thumb";
 
         const img = document.createElement("img");
-        registerLazyImage(img, photo.src);
+        img.src = photo.src;
 
         const file = document.createElement("div");
         file.className = "thumb-filename";
@@ -502,7 +452,7 @@ function renderGalleryPage() {
           t.className = "thumb";
 
           const img = document.createElement("img");
-          registerLazyImage(img, photo.src);
+          img.src = photo.src;
 
           const file = document.createElement("div");
           file.className = "thumb-filename";
@@ -705,17 +655,85 @@ function openGalleryForCategory(catKey) {
       screenGallery.appendChild(galleryPageNav);
     }
 
-    // Lazy Load 用 IntersectionObserver を初期化
-    setupLazyObserver();
-
     setupEventHandlers();
     renderCategoryList();
     showScreen("category");
   }
 
+
+  // ----------------------------------------------------------
+  // 画像要素に対する長押し・右クリック抑止ロジック
+  //   - PC: contextmenu（右クリックメニュー）抑止
+  //   - モバイル: touchstart / touchend / touchmove を抑止して長押しを「しづらく」する
+  //   - MutationObserver で Lazy Load 等で追加された <img> にも追随
+  // ----------------------------------------------------------
+  function protectImage(img) {
+    if (!img || img.dataset.touchProtectApplied === "1") return;
+    img.dataset.touchProtectApplied = "1";
+
+    img.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+    });
+
+    var onTouch = function (e) {
+      try {
+        if (e.touches && e.touches.length === 1) {
+          e.preventDefault();
+        }
+      } catch (err) {
+        // 失敗しても致命的ではないので黙殺
+      }
+    };
+
+    img.addEventListener("touchstart", onTouch, { passive: false });
+    img.addEventListener("touchend", onTouch, { passive: false });
+    img.addEventListener("touchmove", onTouch, { passive: false });
+
+    img.addEventListener("dragstart", function (e) {
+      e.preventDefault();
+    });
+  }
+
+  function protectExistingImages() {
+    var imgs = document.querySelectorAll("img");
+    imgs.forEach(function (img) {
+      protectImage(img);
+    });
+  }
+
+  function observeNewImages() {
+    if (!("MutationObserver" in window)) return;
+
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType !== 1) return; // ELEMENT_NODE 以外は無視
+
+          if (node.tagName && node.tagName.toLowerCase() === "img") {
+            protectImage(node);
+          } else if (node.querySelectorAll) {
+            var imgs = node.querySelectorAll("img");
+            imgs.forEach(function (img) {
+              protectImage(img);
+            });
+          }
+        });
+      });
+    });
+
+    observer.observe(document.documentElement || document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     // 既存の初期化処理
     init();
+
+    // 画像保護ロジック（既存画像＋今後追加される画像）
+    protectExistingImages();
+    observeNewImages();
 
     // 全画面共通：右クリック（コンテキストメニュー）を抑止（キャプチャフェーズ）
     document.addEventListener("contextmenu", function (event) {

@@ -1,72 +1,120 @@
 <!--
-ファイル名            : index.html
-バージョン            : v0.7.3
-作成日・更新日        : 2025-12-01 / 2025-12-01
-保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/web/
-実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator" && python3 wise_corefile_fix_generator_v0.7.3.py
-役割                  : 同期会アルバムビューア用コアファイル（WISE版）。
-参照ファイル・バージョン : wise_corefile_fix_generator_v0.7.3
-注意                  : 本ファイルは generator/core_fixed に生成される候補版です。
-                         必要に応じて WISE/web のコアファイルと手動で差し替えてください。
+ファイル名           : index.html
+バージョン           : v0.9.3
+作成日               : 2025-11-23
+更新日               : 2025-12-07
+保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/index.html
+実行方法（この1行をターミナルにコピペすればOK）:
+  cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
+前提フォルダ構成     :
+  /Users/yoichiamano/Projects/Album_Viewer/photo_data
+  /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本
+  /Users/yoichiamano/Projects/Album_Viewer/WISE/web
+注意事項             :
+  - 本ファイルは SG25 Photo Archive Platform（SG25-PAP）WISE版の公開用 HTML 正本です。
+  - style.css / viewer.js / photos_index.js / touch_protection.js と同一フォルダに配置して使用します。
+  - 公開時は generator を経由して WISE/web → SG25_album へディレクトリごとコピーして利用してください。
 -->
 
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>同期会アルバムビューア</title>
+  <title>SG25 Photo Archive Platform（2025年 杉並高校25期 同期会アルバム）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="杉並高校25期 2025年同期会の写真を三画面方式で閲覧できるアルバムビューアです。" />
+
   <link rel="stylesheet" href="style.css" />
+
+  <!-- 写真インデックス（カテゴリ／グループ／写真一覧） -->
   <script src="photos_index.js"></script>
-  <script defer src="viewer.js"></script>
+  <!-- 三画面ビューア本体 -->
+  <script src="viewer.js"></script>
+  <!-- 画像の長押し・右クリック抑制用 -->
+  <script src="touch_protection.js"></script>
 </head>
 <body>
-  <!-- ヘッダ：黒帯＋校章ロゴ＋中央寄せタイトル -->
-  <header class="app-header">
-    <div class="app-header-inner">
-      <img
-        src="assets/logo_suginami.jpg"
-        alt="杉並高校 校章"
-        class="app-logo"
-      />
-      <span class="app-title-text">2025年杉並高校25期同期会アルバム</span>
-    </div>
-  </header>
+  <div class="app-root">
 
-  <main class="app-main">
-    <!-- 第1画面：カテゴリ一覧（メインボタン群を中央配置） -->
-    <section id="screen-category" class="screen screen-active">
-      <div class="category-screen-inner">
-        <h2 class="screen-title screen-title-center">カテゴリを選んでください</h2>
-        <div id="category-list" class="category-list"></div>
+    <!-- ヘッダー：校章ロゴ＋タイトル -->
+    <header class="app-header">
+      <div class="app-header-inner">
+        <img
+          src="assets/logo_suginami.jpg"
+          alt="杉並高校 校章ロゴ"
+          class="app-logo"
+        />
+        <div class="app-title-text">
+          2025年 杉並高校25期 同期会アルバム
+        </div>
       </div>
-    </section>
+    </header>
 
-    <!-- 第2画面：サムネイル一覧（カテゴリ配下をグループごと） -->
-    <section id="screen-gallery" class="screen screen-hidden">
-      <h2 id="gallery-title" class="screen-title"></h2>
-      <div id="gallery-container" class="gallery-container"></div>
-    </section>
+    <!-- メイン：3画面構成（カテゴリ / サムネイル / 拡大表示） -->
+    <main class="app-main">
 
- <!-- 第3画面：拡大表示 -->
-<section id="screen-viewer" class="screen screen-hidden">
+      <!-- 第1画面：カテゴリ一覧 -->
+      <section id="screen-category">
+        <div class="category-screen-inner">
+          <h1 class="category-screen-title">
+            カテゴリを選択してください
+          </h1>
+          <div id="category-list" class="category-list">
+            <!-- viewer.js によりカテゴリボタン（.category-card）が生成されます -->
+          </div>
+        </div>
+      </section>
 
-  <!-- ★ 第3画面専用の「閉じる」ボタンは不要のため削除 -->
-  <div class="viewer-header"></div>
+      <!-- 第2画面：カテゴリ配下のサムネイル一覧 -->
+      <section id="screen-gallery" style="display: none;">
+        <div class="gallery-screen-inner">
+          <h2 id="gallery-title" class="gallery-title"></h2>
+          <div id="gallery-container" class="gallery-container">
+            <!-- viewer.js によりグループ単位の .gallery-grid / .thumb が生成されます -->
+          </div>
+        </div>
+      </section>
 
-  <div class="viewer-body">
-    <img id="viewer-image" class="viewer-image" src="" alt="" />
-    <p id="viewer-filename" class="viewer-filename"></p>
-    <p id="viewer-context" class="viewer-context"></p>
+      <!-- 第3画面：1枚拡大表示（黒背景＋キャプション） -->
+      <section id="screen-viewer" style="display: none;">
+        <div class="viewer-body">
+          <div class="viewer-image-wrapper">
+            <img
+              id="viewer-image"
+              class="viewer-image"
+              src=""
+              alt=""
+            />
+          </div>
+          <div class="viewer-meta">
+            <div id="viewer-filename" class="viewer-filename"></div>
+            <div id="viewer-context" class="viewer-context"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 常時表示ボタン：左下 🏠（第1画面へ） -->
+    <button
+      id="home-button"
+      class="home-button"
+      type="button"
+      aria-label="カテゴリ一覧へ戻る"
+    >
+      🏠
+    </button>
+
+    <!-- 右下 🔙（第3画面から第2画面へ戻る） -->
+    <button
+      id="viewer-close-button"
+      class="back-button"
+      type="button"
+      aria-label="ひとつ前の画面に戻る"
+    >
+      🔙
+    </button>
+
   </div>
-
-  <!-- ★ 右下に固定表示される「戻る（🔙）」ボタン -->
-  <div class="back-button">🔙</div>
-
-</section>
-  </main>
-
-  <!-- 共通：左下固定の🏠ボタン（第2・第3画面用） -->
-  <button id="home-button" type="button" class="home-button">🏠</button>
 </body>
 </html>
