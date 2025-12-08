@@ -1,5 +1,5 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.6
+// バージョン           : v0.9.7  （第2画面サムネイルを photo_data_web_resized から読み込む対応）
 // 作成日               : 2025-12-01
 // 更新日               : 2025-12-07  (第2・第3画面の画像を background-image 化して長押し保存を抑止)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
@@ -455,7 +455,8 @@ function renderGalleryPage() {
 
         const thumbImage = document.createElement("div");
         thumbImage.className = "thumb-image";
-        thumbImage.style.backgroundImage = `url(${photo.src})`;
+        const thumbSrc = photo.src.replace("photo_data_web/", "photo_data_web_resized/");
+        thumbImage.style.backgroundImage = `url(${thumbSrc})`;
 
         const file = document.createElement("div");
         file.className = "thumb-filename";
@@ -488,7 +489,8 @@ function renderGalleryPage() {
           t.className = "thumb";
 
           const img = document.createElement("img");
-          img.src = photo.src;
+          const thumbSrc2 = photo.src.replace("photo_data_web/", "photo_data_web_resized/");
+          img.src = thumbSrc2;
 
           const file = document.createElement("div");
           file.className = "thumb-filename";
