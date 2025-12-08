@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.9  （第2画面サムネイルを photo_data_web_resized から読み込む対応＋第3画面オーバーレイ抑止モジュール強化）
+// バージョン           : v0.9.10  （第2画面サムネイルを photo_data_web_resized から読み込む対応＋第3画面オーバーレイ抑止モジュールのみ有効化）
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-08  (第3画面の写真表示領域のみオーバーレイ抑止を行う Screen3OverlayProtect モジュール＋スマホ向け touch/pointer 抑止を強化)
+// 更新日               : 2025-12-08  (Screen3OverlayProtect を維持しつつ、全画面タッチ抑止は解除してフッタ操作性を確保)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -189,7 +189,7 @@
   //   - 第3画面の「写真表示領域」にのみ透明オーバーレイをかぶせる。
   //   - オーバーレイの background-image として写真を表示し、
   //     画像保存につながりやすい右クリック・長押し等のイベントを
-  //     第3画面アクティブ中のみ抑止する。
+  //     オーバーレイ上で抑止する。
   //   - 第1・第2画面のレイアウトや通常操作は変更しない。
   // ----------------------------------------------------------
 
@@ -211,8 +211,9 @@
       viewerImageCover.className = "viewer-image-cover";
       parent.appendChild(viewerImageCover);
 
-      // オーバーレイ上での操作を第3画面表示中のみ抑止（キャプチャフェーズ）
+      // オーバーレイ上での操作を抑止（キャプチャフェーズ）
       const block = function (e) {
+        // 第3画面以外では何もしない
         if (!isViewerActive()) return;
         e.preventDefault();
         e.stopPropagation();
@@ -601,7 +602,7 @@
   }
 
   // ----------------------------------------------------------
-  // 第3画面：拡大表示（修正版）
+  // 第3画面：拡大表示（オーバーレイ版）
   // ----------------------------------------------------------
 
   function openViewer(catKey, groupIndex, photoIndex) {
@@ -619,7 +620,7 @@
       viewerImageCover.style.backgroundImage = `url(${photo.src})`;
     }
     if (viewerImage) {
-      viewerImage.src = photo.src;
+      viewerImage.src = photo.src;          // 万一の fallback 用
       viewerImage.alt = photo.filename || "";
     }
 
@@ -761,63 +762,20 @@
     // 既存の初期化処理
     init();
 
-    // 第3画面アクティブ時のみ：タッチ長押しを抑止（スマホブラウザ向け）
-    document.addEventListener(
-      "touchstart",
-      function (event) {
-        if (isViewerActive()) {
-          event.preventDefault();
-        }
-      },
-      { capture: true, passive: false }
-    );
-
-    document.addEventListener(
-      "touchend",
-      function (event) {
-        if (isViewerActive()) {
-          event.preventDefault();
-        }
-      },
-      { capture: true, passive: false }
-    );
-
-    document.addEventListener(
-      "pointerdown",
-      function (event) {
-        if (isViewerActive()) {
-          event.preventDefault();
-        }
-      },
-      { capture: true, passive: false }
-    );
-
-    document.addEventListener(
-      "pointerup",
-      function (event) {
-        if (isViewerActive()) {
-          event.preventDefault();
-        }
-      },
-      { capture: true, passive: false }
-    );
-
-    // 第3画面アクティブ時のみ：右クリック（コンテキストメニュー）を抑止（キャプチャフェーズ）
+    // 第3画面アクティブ時のみ：右クリック（コンテキストメニュー）を抑止（デスクトップ向け）
     document.addEventListener(
       "contextmenu",
       function (event) {
-        if (isViewerActive()) {
-          event.preventDefault();
-        }
+        if (!isViewerActive()) return;
+        event.preventDefault();
       },
       true
     );
 
-    // 第3画面アクティブ時のみ：画像などのドラッグ開始も抑止
+    // 第3画面アクティブ時のみ：画像などのドラッグ開始も抑止（デスクトップ向け）
     document.addEventListener("dragstart", function (event) {
-      if (isViewerActive()) {
-        event.preventDefault();
-      }
+      if (!isViewerActive()) return;
+      event.preventDefault();
     });
   });
 })();
