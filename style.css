@@ -1,7 +1,7 @@
 /*
 ファイル名            : style.css
 バージョン            : v0.9.9
-作成日・更新日        : 2025-12-08  (第3画面 Screen3OverlayProtect モジュール対応コメント追記)
+作成日・更新日        : 2025-12-08  (背景画像化＋長押し抑止強化＋カテゴリ2行表示対応＋Screen3OverlayProtect 用 z-index 追加)
 保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
 実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
 役割                  : SG25 Photo Archive Platform（SG25-PAP）用 三画面アルバムビューア（WISE版）のスタイル定義。
@@ -416,4 +416,5 @@ body,
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
+  z-index: 1; /* 第3画面の写真表示レイヤーとして前面に出す */
 }
