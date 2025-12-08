@@ -1,7 +1,7 @@
 /*
 ファイル名            : style.css
-バージョン            : v0.9.8
-作成日・更新日        : 2025-12-07  (背景画像化＋長押し抑止強化＋カテゴリ2行表示対応)
+バージョン            : v0.9.9
+作成日・更新日        : 2025-12-08  (第3画面 Screen3OverlayProtect モジュール対応コメント追記)
 保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/style.css
 実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
 役割                  : SG25 Photo Archive Platform（SG25-PAP）用 三画面アルバムビューア（WISE版）のスタイル定義。
@@ -404,7 +404,12 @@ body,
   user-select: none;
 }
 
-/* 第3画面：画像保存抑止用オーバーレイ */
+/* 第3画面：画像保存抑止用オーバーレイ
+   Module: Screen3OverlayProtect
+   - 第3画面 viewer-image の上に透明レイヤーをかぶせる。
+   - 写真はこのレイヤーの background-image として表示される。
+   - クリック／長押しイベントは viewer.js 側のモジュールで抑止を試みる。
+*/
 .viewer-image-cover {
   position: absolute;
   inset: 0;
@@ -412,4 +417,3 @@ body,
   background-size: contain;
   background-repeat: no-repeat;
 }
-

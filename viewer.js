@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.7  （第2画面サムネイルを photo_data_web_resized から読み込む対応）
+// バージョン           : v0.9.8  （第2画面サムネイルを photo_data_web_resized から読み込む対応＋第3画面オーバーレイ抑止モジュール追加）
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-07  (第2・第3画面の画像を background-image 化して長押し保存を抑止)
+// 更新日               : 2025-12-08  (第3画面の写真表示領域のみオーバーレイ抑止を行う Screen3OverlayProtect モジュール追加)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -118,6 +118,17 @@
   let galleryNextButton = null;
 
   // ----------------------------------------------------------
+  // 共通ヘルパー
+  // ----------------------------------------------------------
+
+  function isViewerActive() {
+    return (
+      screenViewer &&
+      screenViewer.classList.contains("screen-active")
+    );
+  }
+
+  // ----------------------------------------------------------
   // 内部UI命名の正規表現
   //   <catID>.<grpID>.<subID>_<seq>.<ext>
   //   例: 1.6.1-1_001.jpg, 1.7.バスケット_003.JPG
@@ -172,11 +183,16 @@
     return blocks;
   }
 
-  
   // ----------------------------------------------------------
-  // 第3画面用：viewerImage の上に background-image ベースの
-  // オーバーレイ（viewerImageCover）を載せる
+  // Module: Screen3OverlayProtect
+  // 役割:
+  //   - 第3画面の「写真表示領域」にのみ透明オーバーレイをかぶせる。
+  //   - オーバーレイの background-image として写真を表示し、
+  //     画像保存につながりやすい右クリック・長押し等のイベントを
+  //     第3画面アクティブ中のみ抑止する。
+  //   - 第1・第2画面のレイアウトや通常操作は変更しない。
   // ----------------------------------------------------------
+
   function setupViewerImageCover() {
     if (!viewerImage) return;
     const parent = viewerImage.parentElement;
@@ -194,6 +210,29 @@
       viewerImageCover.id = "viewer-image-cover";
       viewerImageCover.className = "viewer-image-cover";
       parent.appendChild(viewerImageCover);
+
+      // オーバーレイ上での操作を第3画面表示中のみ抑止
+      const block = function (e) {
+        if (!isViewerActive()) return;
+        e.preventDefault();
+        e.stopPropagation();
+      };
+      [
+        "contextmenu",
+        "click",
+        "dblclick",
+        "mousedown",
+        "mouseup",
+        "touchstart",
+        "touchend",
+        "touchmove",
+        "pointerdown",
+        "pointerup",
+        "pointermove",
+        "dragstart",
+      ].forEach((type) => {
+        viewerImageCover.addEventListener(type, block, { passive: false });
+      });
     }
 
     // img 自体は視覚的には非表示＋イベントを受けない状態に
@@ -201,7 +240,7 @@
     viewerImage.style.pointerEvents = "none";
   }
 
-// ----------------------------------------------------------
+  // ----------------------------------------------------------
   // 画面切替
   // ----------------------------------------------------------
 
@@ -326,177 +365,148 @@
   }
 
   // ----------------------------------------------------------
-// 第2画面：ギャラリー（ページ分割＋犬＋🏠＋犬ナビ）
-// ----------------------------------------------------------
+  // 第2画面：ギャラリー（ページ分割＋犬＋🏠＋犬ナビ）
+  // ----------------------------------------------------------
 
-// 1ページあたりのサムネイル枚数
-const PHOTOS_PER_PAGE = 100;
+  // 1ページあたりのサムネイル枚数
+  const PHOTOS_PER_PAGE = 100;
 
-// 現在のカテゴリに対する「フラット化された写真一覧」を構築
-function buildFlatGalleryItems(catKey) {
-  const cat = window.PHOTOS_INDEX.categories[catKey];
-  if (!cat || !cat.groups) return [];
+  // 現在のカテゴリに対する「フラット化された写真一覧」を構築
+  function buildFlatGalleryItems(catKey) {
+    const cat = window.PHOTOS_INDEX.categories[catKey];
+    if (!cat || !cat.groups) return [];
 
-  const groups = cat.groups;
-  const order = buildGroupOrder(groups);
-  const flat = [];
+    const groups = cat.groups;
+    const order = buildGroupOrder(groups);
+    const flat = [];
 
-  order.forEach((groupIndex) => {
-    const group = groups[groupIndex];
-    if (!group || !group.photos) return;
-    group.photos.forEach((photo, photoIndex) => {
-      flat.push({
-        groupIndex,
-        photoIndex,
-        photo,
-      });
-    });
-  });
-
-  return flat;
-}
-
-// ギャラリーページナビの表示・非表示を制御
-function updateGalleryNavVisibility() {
-  if (!galleryPageNav) return;
-
-  const isGalleryActive =
-    screenGallery && screenGallery.classList.contains("screen-active");
-  const hasMultiplePages =
-    isGalleryActive && currentGalleryTotalPages && currentGalleryTotalPages > 1;
-
-  // 第2画面でページ数が2ページ以上ある場合のみ、中央の 🐶＋🏠＋🐶 ナビを表示
-  galleryPageNav.style.display = hasMultiplePages ? "flex" : "none";
-
-  // 第2画面でページ数が2ページ以上ある場合は、左下の 🏠 ボタンは隠す。
-  // 1ページのみの場合は、従来どおり左下 🏠 を表示する。
-  if (homeButton && isGalleryActive) {
-    if (hasMultiplePages) {
-      homeButton.style.display = "none";
-    } else {
-      homeButton.style.display = "block";
-    }
-  }
-}
-
-// 現在のページ番号 currentGalleryPage に基づいて第2画面を描画
-function renderGalleryPage() {
-  if (!currentCategoryKey) return;
-
-  const cat = window.PHOTOS_INDEX.categories[currentCategoryKey];
-  if (!cat || !cat.groups) return;
-
-  const groups = cat.groups;
-  galleryContainer.innerHTML = "";
-
-  if (!currentGalleryFlatItems || currentGalleryFlatItems.length === 0) {
-    updateGalleryNavVisibility();
-    return;
-  }
-
-  const total = currentGalleryFlatItems.length;
-  const totalPages = currentGalleryTotalPages || 1;
-  if (currentGalleryPage < 1) currentGalleryPage = 1;
-  if (currentGalleryPage > totalPages) currentGalleryPage = totalPages;
-
-  const startIndex = (currentGalleryPage - 1) * PHOTOS_PER_PAGE;
-  const endIndex = Math.min(startIndex + PHOTOS_PER_PAGE, total);
-  const pageItems = currentGalleryFlatItems.slice(startIndex, endIndex);
-
-  const groupOrderOnPage = [];
-  const groupMap = new Map();
-
-  pageItems.forEach((item) => {
-    const gIndex = item.groupIndex;
-    if (!groupMap.has(gIndex)) {
-      groupMap.set(gIndex, []);
-      groupOrderOnPage.push(gIndex);
-    }
-    groupMap.get(gIndex).push(item);
-  });
-
-  groupOrderOnPage.forEach((groupIndex) => {
-    const group = groups[groupIndex];
-    if (!group) return;
-
-    const items = groupMap.get(groupIndex) || [];
-
-    const h3 = document.createElement("h3");
-    h3.className = "gallery-group-title";
-    h3.textContent = formatGroupTitle(group.name);
-    galleryContainer.appendChild(h3);
-
-    const subMap = new Map();
-    items.forEach((item) => {
-      const filename = (item.photo && item.photo.filename) || "";
-      const subId = extractSubIdFromFilename(filename) || "";
-      const key = subId || "";
-      if (!subMap.has(key)) {
-        subMap.set(key, []);
-      }
-      subMap.get(key).push(item);
-    });
-
-    const blocks = [];
-    subMap.forEach((blockItems, subId) => {
-      if (subId) {
-        blocks.push({ subId, items: blockItems });
-      }
-    });
-
-    if (blocks.length <= 1) {
-      const grid = document.createElement("div");
-      grid.className = "gallery-grid";
-
-      items.forEach((item) => {
-        const photo = item.photo;
-        const t = document.createElement("div");
-        t.className = "thumb";
-
-        const thumbImage = document.createElement("div");
-        thumbImage.className = "thumb-image";
-        const thumbSrc = photo.src.replace("photo_data_web/", "photo_data_web_resized/");
-        thumbImage.style.backgroundImage = `url(${thumbSrc})`;
-
-        const file = document.createElement("div");
-        file.className = "thumb-filename";
-        file.textContent = formatDisplayFilename(photo.filename);
-
-        t.appendChild(thumbImage);
-        t.appendChild(file);
-
-        t.addEventListener("click", () => {
-          openViewer(currentCategoryKey, item.groupIndex, item.photoIndex);
+    order.forEach((groupIndex) => {
+      const group = groups[groupIndex];
+      if (!group || !group.photos) return;
+      group.photos.forEach((photo, photoIndex) => {
+        flat.push({
+          groupIndex,
+          photoIndex,
+          photo,
         });
+      });
+    });
 
-        grid.appendChild(t);
+    return flat;
+  }
+
+  // ギャラリーページナビの表示・非表示を制御
+  function updateGalleryNavVisibility() {
+    if (!galleryPageNav) return;
+
+    const isGalleryActive =
+      screenGallery && screenGallery.classList.contains("screen-active");
+    const hasMultiplePages =
+      isGalleryActive &&
+      currentGalleryTotalPages &&
+      currentGalleryTotalPages > 1;
+
+    // 第2画面でページ数が2ページ以上ある場合のみ、中央の 🐶＋🏠＋🐶 ナビを表示
+    galleryPageNav.style.display = hasMultiplePages ? "flex" : "none";
+
+    // 第2画面でページ数が2ページ以上ある場合は、左下の 🏠 ボタンは隠す。
+    // 1ページのみの場合は、従来どおり左下 🏠 を表示する。
+    if (homeButton && isGalleryActive) {
+      if (hasMultiplePages) {
+        homeButton.style.display = "none";
+      } else {
+        homeButton.style.display = "block";
+      }
+    }
+  }
+
+  // 現在のページ番号 currentGalleryPage に基づいて第2画面を描画
+  function renderGalleryPage() {
+    if (!currentCategoryKey) return;
+
+    const cat = window.PHOTOS_INDEX.categories[currentCategoryKey];
+    if (!cat || !cat.groups) return;
+
+    const groups = cat.groups;
+    galleryContainer.innerHTML = "";
+
+    if (!currentGalleryFlatItems || currentGalleryFlatItems.length === 0) {
+      updateGalleryNavVisibility();
+      return;
+    }
+
+    const total = currentGalleryFlatItems.length;
+    const totalPages = currentGalleryTotalPages || 1;
+    if (currentGalleryPage < 1) currentGalleryPage = 1;
+    if (currentGalleryPage > totalPages) currentGalleryPage = totalPages;
+
+    const startIndex = (currentGalleryPage - 1) * PHOTOS_PER_PAGE;
+    const endIndex = Math.min(startIndex + PHOTOS_PER_PAGE, total);
+    const pageItems = currentGalleryFlatItems.slice(startIndex, endIndex);
+
+    const groupOrderOnPage = [];
+    const groupMap = new Map();
+
+    pageItems.forEach((item) => {
+      const gIndex = item.groupIndex;
+      if (!groupMap.has(gIndex)) {
+        groupMap.set(gIndex, []);
+        groupOrderOnPage.push(gIndex);
+      }
+      groupMap.get(gIndex).push(item);
+    });
+
+    groupOrderOnPage.forEach((groupIndex) => {
+      const group = groups[groupIndex];
+      if (!group) return;
+
+      const items = groupMap.get(groupIndex) || [];
+
+      const h3 = document.createElement("h3");
+      h3.className = "gallery-group-title";
+      h3.textContent = formatGroupTitle(group.name);
+      galleryContainer.appendChild(h3);
+
+      const subMap = new Map();
+      items.forEach((item) => {
+        const filename = (item.photo && item.photo.filename) || "";
+        const subId = extractSubIdFromFilename(filename) || "";
+        const key = subId || "";
+        if (!subMap.has(key)) {
+          subMap.set(key, []);
+        }
+        subMap.get(key).push(item);
       });
 
-      galleryContainer.appendChild(grid);
-    } else {
-      blocks.forEach((block) => {
-        const h4 = document.createElement("h4");
-        h4.className = "gallery-subgroup-title";
-        h4.textContent = `■ ${block.subId}`;
-        galleryContainer.appendChild(h4);
+      const blocks = [];
+      subMap.forEach((blockItems, subId) => {
+        if (subId) {
+          blocks.push({ subId, items: blockItems });
+        }
+      });
 
+      if (blocks.length <= 1) {
         const grid = document.createElement("div");
         grid.className = "gallery-grid";
 
-        block.items.forEach((item) => {
+        items.forEach((item) => {
           const photo = item.photo;
           const t = document.createElement("div");
           t.className = "thumb";
 
-          const img = document.createElement("img");
-          const thumbSrc2 = photo.src.replace("photo_data_web/", "photo_data_web_resized/");
-          img.src = thumbSrc2;
+          const thumbImage = document.createElement("div");
+          thumbImage.className = "thumb-image";
+          const thumbSrc = photo.src.replace(
+            "photo_data_web/",
+            "photo_data_web_resized/"
+          );
+          thumbImage.style.backgroundImage = `url(${thumbSrc})`;
 
           const file = document.createElement("div");
           file.className = "thumb-filename";
           file.textContent = formatDisplayFilename(photo.filename);
 
-          t.appendChild(img);
+          t.appendChild(thumbImage);
           t.appendChild(file);
 
           t.addEventListener("click", () => {
@@ -507,49 +517,87 @@ function renderGalleryPage() {
         });
 
         galleryContainer.appendChild(grid);
-      });
-    }
-  });
+      } else {
+        blocks.forEach((block) => {
+          const h4 = document.createElement("h4");
+          h4.className = "gallery-subgroup-title";
+          h4.textContent = `■ ${block.subId}`;
+          galleryContainer.appendChild(h4);
 
-  updateGalleryNavVisibility();
-}
+          const grid = document.createElement("div");
+          grid.className = "gallery-grid";
 
-// 前／次ページに移動（ページ境界ではループ）
-function changeGalleryPage(delta) {
-  if (!currentGalleryFlatItems || currentGalleryFlatItems.length === 0) return;
-  if (!currentGalleryTotalPages || currentGalleryTotalPages <= 1) return;
+          block.items.forEach((item) => {
+            const photo = item.photo;
+            const t = document.createElement("div");
+            t.className = "thumb";
 
-  currentGalleryPage += delta;
+            const img = document.createElement("img");
+            const thumbSrc2 = photo.src.replace(
+              "photo_data_web/",
+              "photo_data_web_resized/"
+            );
+            img.src = thumbSrc2;
 
-  if (currentGalleryPage < 1) {
-    currentGalleryPage = currentGalleryTotalPages;
-  } else if (currentGalleryPage > currentGalleryTotalPages) {
-    currentGalleryPage = 1;
+            const file = document.createElement("div");
+            file.className = "thumb-filename";
+            file.textContent = formatDisplayFilename(photo.filename);
+
+            t.appendChild(img);
+            t.appendChild(file);
+
+            t.addEventListener("click", () => {
+              openViewer(currentCategoryKey, item.groupIndex, item.photoIndex);
+            });
+
+            grid.appendChild(t);
+          });
+
+          galleryContainer.appendChild(grid);
+        });
+      }
+    });
+
+    updateGalleryNavVisibility();
   }
 
-  renderGalleryPage();
-}
+  // 前／次ページに移動（ページ境界ではループ）
+  function changeGalleryPage(delta) {
+    if (!currentGalleryFlatItems || currentGalleryFlatItems.length === 0) return;
+    if (!currentGalleryTotalPages || currentGalleryTotalPages <= 1) return;
 
-// 指定カテゴリの第2画面を開く（page=1 から表示開始）
-function openGalleryForCategory(catKey) {
-  const cat = window.PHOTOS_INDEX.categories[catKey];
-  if (!cat) return;
+    currentGalleryPage += delta;
 
-  currentCategoryKey = catKey;
+    if (currentGalleryPage < 1) {
+      currentGalleryPage = currentGalleryTotalPages;
+    } else if (currentGalleryPage > currentGalleryTotalPages) {
+      currentGalleryPage = 1;
+    }
 
-  const displayTitle = formatCategoryTitle(cat.title, catKey);
-  galleryTitle.textContent = displayTitle;
+    renderGalleryPage();
+  }
 
-  currentGalleryFlatItems = buildFlatGalleryItems(catKey);
-  const total = currentGalleryFlatItems.length;
-  currentGalleryTotalPages = total > 0 ? Math.ceil(total / PHOTOS_PER_PAGE) : 1;
-  currentGalleryPage = 1;
+  // 指定カテゴリの第2画面を開く（page=1 から表示開始）
+  function openGalleryForCategory(catKey) {
+    const cat = window.PHOTOS_INDEX.categories[catKey];
+    if (!cat) return;
 
-  renderGalleryPage();
-  showScreen("gallery");
-}
+    currentCategoryKey = catKey;
 
-// ----------------------------------------------------------
+    const displayTitle = formatCategoryTitle(cat.title, catKey);
+    galleryTitle.textContent = displayTitle;
+
+    currentGalleryFlatItems = buildFlatGalleryItems(catKey);
+    const total = currentGalleryFlatItems.length;
+    currentGalleryTotalPages =
+      total > 0 ? Math.ceil(total / PHOTOS_PER_PAGE) : 1;
+    currentGalleryPage = 1;
+
+    renderGalleryPage();
+    showScreen("gallery");
+  }
+
+  // ----------------------------------------------------------
   // 第3画面：拡大表示（修正版）
   // ----------------------------------------------------------
 
@@ -563,7 +611,7 @@ function openGalleryForCategory(catKey) {
     currentGroupIndex = groupIndex;
     currentPhotoIndex = photoIndex;
 
-    // 表示画像
+    // 表示画像（第3画面オーバーレイに背景画像として設定）
     if (viewerImageCover) {
       viewerImageCover.style.backgroundImage = `url(${photo.src})`;
     }
@@ -710,14 +758,22 @@ function openGalleryForCategory(catKey) {
     // 既存の初期化処理
     init();
 
-    // 全画面共通：右クリック（コンテキストメニュー）を抑止（キャプチャフェーズ）
-    document.addEventListener("contextmenu", function (event) {
-      event.preventDefault();
-    }, true);
+    // 第3画面アクティブ時のみ：右クリック（コンテキストメニュー）を抑止（キャプチャフェーズ）
+    document.addEventListener(
+      "contextmenu",
+      function (event) {
+        if (isViewerActive()) {
+          event.preventDefault();
+        }
+      },
+      true
+    );
 
-    // 画像などのドラッグ開始も抑止（ドラッグ＆ドロップ保存の抑止）
+    // 第3画面アクティブ時のみ：画像などのドラッグ開始も抑止
     document.addEventListener("dragstart", function (event) {
-      event.preventDefault();
+      if (isViewerActive()) {
+        event.preventDefault();
+      }
     });
   });
 })();
