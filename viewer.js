@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.11  （第2画面 Paging＋犬ナビ＋第3画面オーバーレイ抑止モジュールの微修正）
+// バージョン           : v0.9.7  （第2画面サムネイルを photo_data_web_resized から読み込む対応）
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-08  (Screen3OverlayProtect を viewer-image 専用ラッパに限定し、フッタ操作性とモバイル挙動を調整)
+// 更新日               : 2025-12-07  (第2・第3画面の画像を background-image 化して長押し保存を抑止)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -118,17 +118,6 @@
   let galleryNextButton = null;
 
   // ----------------------------------------------------------
-  // 共通ヘルパー
-  // ----------------------------------------------------------
-
-  function isViewerActive() {
-    return (
-      screenViewer &&
-      screenViewer.classList.contains("screen-active")
-    );
-  }
-
-  // ----------------------------------------------------------
   // 内部UI命名の正規表現
   //   <catID>.<grpID>.<subID>_<seq>.<ext>
   //   例: 1.6.1-1_001.jpg, 1.7.バスケット_003.JPG
@@ -164,7 +153,7 @@
   }
 
   // ----------------------------------------------------------
-  // subID ごとに写真分割（PAAS 仕様からの名残・現状は未使用）
+  // subID ごとに写真分割
   // ----------------------------------------------------------
 
   function splitPhotosBySubId(photos) {
@@ -184,72 +173,26 @@
   }
 
   // ----------------------------------------------------------
-  // Module: Screen3OverlayProtect
-  // 役割:
-  //   - 第3画面の「写真表示領域」にのみ透明オーバーレイをかぶせる。
-  //   - オーバーレイの background-image として写真を表示し、
-  //     画像保存につながりやすい右クリック・長押し等のイベントを
-  //     オーバーレイ上で抑止する。
-  //   - 第1・第2画面のレイアウトや通常操作は変更しない。
-  //   - フッタの 🏠／🔙 ボタンは、従来どおりクリック可能なまま維持する。
+  // 第3画面用：viewerImage の上に background-image ベースの
+  // オーバーレイ（viewerImageCover）を載せる
   // ----------------------------------------------------------
-
   function setupViewerImageCover() {
     if (!viewerImage) return;
-
-    // 1. viewerImage を専用ラッパ .viewer-image-wrapper で囲む
-    let parent = viewerImage.parentElement;
+    const parent = viewerImage.parentElement;
     if (!parent) return;
 
-    if (!parent.classList.contains("viewer-image-wrapper")) {
-      const wrapper = document.createElement("div");
-      wrapper.className = "viewer-image-wrapper";
-
-      parent.insertBefore(wrapper, viewerImage);
-      wrapper.appendChild(viewerImage);
-
-      parent = wrapper;
-    }
-
-    // 2. ラッパをオーバーレイの基準とする
+    // ラッパーを相対配置に
     const currentPosition = window.getComputedStyle(parent).position;
     if (!currentPosition || currentPosition === "static") {
       parent.style.position = "relative";
     }
 
-    // 3. 既に作っていれば再利用
+    // 既に作っていれば再利用
     if (!viewerImageCover) {
       viewerImageCover = document.createElement("div");
       viewerImageCover.id = "viewer-image-cover";
       viewerImageCover.className = "viewer-image-cover";
       parent.appendChild(viewerImageCover);
-
-      // オーバーレイ上での操作を抑止（キャプチャフェーズ）
-      const block = function (e) {
-        // 第3画面以外では何もしない
-        if (!isViewerActive()) return;
-        e.preventDefault();
-        e.stopPropagation();
-      };
-      [
-        "contextmenu",
-        "click",
-        "dblclick",
-        "mousedown",
-        "mouseup",
-        "touchstart",
-        "touchend",
-        "touchmove",
-        "pointerdown",
-        "pointerup",
-        "pointermove",
-        "dragstart",
-      ].forEach((type) => {
-        viewerImageCover.addEventListener(type, block, {
-          capture: true,
-          passive: false,
-        });
-      });
     }
 
     // img 自体は視覚的には非表示＋イベントを受けない状態に
@@ -517,7 +460,8 @@
             "photo_data_web/",
             "photo_data_web_resized/"
           );
-          thumbImage.style.backgroundImage = `url(${thumbSrc})`;
+          // ★スペース・日本語を含むパスを安全に解釈させるため URL をクオート
+          thumbImage.style.backgroundImage = `url("${thumbSrc}")`;
 
           const file = document.createElement("div");
           file.className = "thumb-filename";
@@ -580,7 +524,8 @@
 
   // 前／次ページに移動（ページ境界ではループ）
   function changeGalleryPage(delta) {
-    if (!currentGalleryFlatItems || currentGalleryFlatItems.length === 0) return;
+    if (!currentGalleryFlatItems || currentGalleryFlatItems.length === 0)
+      return;
     if (!currentGalleryTotalPages || currentGalleryTotalPages <= 1) return;
 
     currentGalleryPage += delta;
@@ -606,8 +551,7 @@
 
     currentGalleryFlatItems = buildFlatGalleryItems(catKey);
     const total = currentGalleryFlatItems.length;
-    currentGalleryTotalPages =
-      total > 0 ? Math.ceil(total / PHOTOS_PER_PAGE) : 1;
+    currentGalleryTotalPages = total > 0 ? Math.ceil(total / PHOTOS_PER_PAGE) : 1;
     currentGalleryPage = 1;
 
     renderGalleryPage();
@@ -615,7 +559,7 @@
   }
 
   // ----------------------------------------------------------
-  // 第3画面：拡大表示（オーバーレイ版）
+  // 第3画面：拡大表示（修正版）
   // ----------------------------------------------------------
 
   function openViewer(catKey, groupIndex, photoIndex) {
@@ -628,12 +572,13 @@
     currentGroupIndex = groupIndex;
     currentPhotoIndex = photoIndex;
 
-    // 表示画像（第3画面オーバーレイに背景画像として設定）
+    // 表示画像
     if (viewerImageCover) {
-      viewerImageCover.style.backgroundImage = `url(${photo.src})`;
+      // ★こちらも URL をクオートして background-image に指定
+      viewerImageCover.style.backgroundImage = `url("${photo.src}")`;
     }
     if (viewerImage) {
-      viewerImage.src = photo.src;          // 万一の fallback 用
+      viewerImage.src = photo.src;
       viewerImage.alt = photo.filename || "";
     }
 
@@ -775,19 +720,17 @@
     // 既存の初期化処理
     init();
 
-    // 第3画面アクティブ時のみ：右クリック（コンテキストメニュー）を抑止（デスクトップ向け）
+    // 全画面共通：右クリック（コンテキストメニュー）を抑止（キャプチャフェーズ）
     document.addEventListener(
       "contextmenu",
       function (event) {
-        if (!isViewerActive()) return;
         event.preventDefault();
       },
       true
     );
 
-    // 第3画面アクティブ時のみ：画像などのドラッグ開始も抑止（デスクトップ向け）
+    // 画像などのドラッグ開始も抑止（ドラッグ＆ドロップ保存の抑止）
     document.addEventListener("dragstart", function (event) {
-      if (!isViewerActive()) return;
       event.preventDefault();
     });
   });
