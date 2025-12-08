@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.8  （第2画面サムネイルを photo_data_web_resized から読み込む対応＋第3画面オーバーレイ抑止モジュール追加）
+// バージョン           : v0.9.9  （第2画面サムネイルを photo_data_web_resized から読み込む対応＋第3画面オーバーレイ抑止モジュール強化）
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-08  (第3画面の写真表示領域のみオーバーレイ抑止を行う Screen3OverlayProtect モジュール＋スマホ向け touch 抑止を追加)
+// 更新日               : 2025-12-08  (第3画面の写真表示領域のみオーバーレイ抑止を行う Screen3OverlayProtect モジュール＋スマホ向け touch/pointer 抑止を強化)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -211,7 +211,7 @@
       viewerImageCover.className = "viewer-image-cover";
       parent.appendChild(viewerImageCover);
 
-      // オーバーレイ上での操作を第3画面表示中のみ抑止
+      // オーバーレイ上での操作を第3画面表示中のみ抑止（キャプチャフェーズ）
       const block = function (e) {
         if (!isViewerActive()) return;
         e.preventDefault();
@@ -231,7 +231,10 @@
         "pointermove",
         "dragstart",
       ].forEach((type) => {
-        viewerImageCover.addEventListener(type, block, { passive: false });
+        viewerImageCover.addEventListener(type, block, {
+          capture: true,
+          passive: false,
+        });
       });
     }
 
@@ -771,6 +774,26 @@
 
     document.addEventListener(
       "touchend",
+      function (event) {
+        if (isViewerActive()) {
+          event.preventDefault();
+        }
+      },
+      { capture: true, passive: false }
+    );
+
+    document.addEventListener(
+      "pointerdown",
+      function (event) {
+        if (isViewerActive()) {
+          event.preventDefault();
+        }
+      },
+      { capture: true, passive: false }
+    );
+
+    document.addEventListener(
+      "pointerup",
       function (event) {
         if (isViewerActive()) {
           event.preventDefault();
