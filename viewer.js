@@ -1,7 +1,7 @@
 // ファイル名           : viewer.js
-// バージョン           : v0.9.10  （第2画面サムネイルを photo_data_web_resized から読み込む対応＋第3画面オーバーレイ抑止モジュールのみ有効化）
+// バージョン           : v0.9.11  （第2画面 Paging＋犬ナビ＋第3画面オーバーレイ抑止モジュールの微修正）
 // 作成日               : 2025-12-01
-// 更新日               : 2025-12-08  (Screen3OverlayProtect を維持しつつ、全画面タッチ抑止は解除してフッタ操作性を確保)
+// 更新日               : 2025-12-08  (Screen3OverlayProtect を viewer-image 専用ラッパに限定し、フッタ操作性とモバイル挙動を調整)
 // 保存先               : /Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本/viewer.js
 // 実行方法（この1行をターミナルにコピペすればOK）:
 //                        cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator/WEB公開用正本" && open index.html
@@ -164,7 +164,7 @@
   }
 
   // ----------------------------------------------------------
-  // subID ごとに写真分割
+  // subID ごとに写真分割（PAAS 仕様からの名残・現状は未使用）
   // ----------------------------------------------------------
 
   function splitPhotosBySubId(photos) {
@@ -191,20 +191,33 @@
   //     画像保存につながりやすい右クリック・長押し等のイベントを
   //     オーバーレイ上で抑止する。
   //   - 第1・第2画面のレイアウトや通常操作は変更しない。
+  //   - フッタの 🏠／🔙 ボタンは、従来どおりクリック可能なまま維持する。
   // ----------------------------------------------------------
 
   function setupViewerImageCover() {
     if (!viewerImage) return;
-    const parent = viewerImage.parentElement;
+
+    // 1. viewerImage を専用ラッパ .viewer-image-wrapper で囲む
+    let parent = viewerImage.parentElement;
     if (!parent) return;
 
-    // ラッパーを相対配置に
+    if (!parent.classList.contains("viewer-image-wrapper")) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "viewer-image-wrapper";
+
+      parent.insertBefore(wrapper, viewerImage);
+      wrapper.appendChild(viewerImage);
+
+      parent = wrapper;
+    }
+
+    // 2. ラッパをオーバーレイの基準とする
     const currentPosition = window.getComputedStyle(parent).position;
     if (!currentPosition || currentPosition === "static") {
       parent.style.position = "relative";
     }
 
-    // 既に作っていれば再利用
+    // 3. 既に作っていれば再利用
     if (!viewerImageCover) {
       viewerImageCover = document.createElement("div");
       viewerImageCover.id = "viewer-image-cover";
