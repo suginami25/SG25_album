@@ -1,13 +1,12 @@
 /*
 ファイル名            : photos_index.js
-バージョン            : v0.7.3
-作成日・更新日        : 2025-12-01 / 2025-12-01
-保存先                : /Users/yoichiamano/Projects/Album_Viewer/WISE/web/
-実行方法              : cd "/Users/yoichiamano/Projects/Album_Viewer/WISE/generator" && python3 wise_corefile_fix_generator_v0.7.3.py
-役割                  : 同期会アルバムビューア用コアファイル（WISE版）。
-参照ファイル・バージョン : wise_corefile_fix_generator_v0.7.3
-注意                  : 本ファイルは generator/core_fixed に生成される候補版です。
-                         必要に応じて WISE/web のコアファイルと手動で差し替えてください。
+生成器                : sg25_build_album_publish.py
+生成日時              : 2025-12-20 03:25:20
+保存先                : /Users/yoichiamano/Projects/Album_Viewer/SG25_AlbumUnit/Alubum_Publish/photos_index.js
+役割                  : SG25-PAP アルバムビューア用インデックス（公開用）。
+                        viewer.js は window.PHOTOS_INDEX を参照し、
+                        カテゴリ／グループ／写真配列から表示と枚数集計を行う。
+注意                  : 本ファイルは自動生成。手編集しない。
 */
 
 window.PHOTOS_INDEX = {
@@ -119,127 +118,6 @@ window.PHOTOS_INDEX = {
             {
               "filename": "009.jpg",
               "src": "photo_data_web/1.1次会・2次会/1.1.会場の雰囲気/009.jpg"
-            }
-          ]
-        },
-        {
-          "name": "1.10.幹事チーム",
-          "photos": [
-            {
-              "filename": "001.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/001.jpg"
-            },
-            {
-              "filename": "002.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/002.jpg"
-            },
-            {
-              "filename": "003.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/003.jpg"
-            },
-            {
-              "filename": "004.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/004.jpg"
-            },
-            {
-              "filename": "005.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/005.jpg"
-            },
-            {
-              "filename": "006.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/006.jpg"
-            },
-            {
-              "filename": "007.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/007.jpg"
-            },
-            {
-              "filename": "008.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/008.jpg"
-            },
-            {
-              "filename": "009.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/009.jpg"
-            },
-            {
-              "filename": "010.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/010.jpg"
-            },
-            {
-              "filename": "011.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/011.jpg"
-            },
-            {
-              "filename": "012.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/012.jpg"
-            },
-            {
-              "filename": "013.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/013.jpg"
-            },
-            {
-              "filename": "014.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/014.jpg"
-            },
-            {
-              "filename": "015.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/015.jpg"
-            },
-            {
-              "filename": "016.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/016.jpg"
-            },
-            {
-              "filename": "017.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/017.jpg"
-            },
-            {
-              "filename": "018.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/018.jpg"
-            },
-            {
-              "filename": "019.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/019.jpg"
-            },
-            {
-              "filename": "020.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/020.jpg"
-            },
-            {
-              "filename": "021.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/021.jpg"
-            },
-            {
-              "filename": "022.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/022.jpg"
-            },
-            {
-              "filename": "023.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/023.jpg"
-            },
-            {
-              "filename": "024.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/024.jpg"
-            },
-            {
-              "filename": "025.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/025.jpg"
-            },
-            {
-              "filename": "026.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/026.jpg"
-            },
-            {
-              "filename": "027.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/027.jpg"
-            },
-            {
-              "filename": "028.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/028.jpg"
-            },
-            {
-              "filename": "029.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/029.jpg"
             }
           ]
         },
@@ -363,6 +241,10 @@ window.PHOTOS_INDEX = {
             {
               "filename": "002.jpg",
               "src": "photo_data_web/1.1次会・2次会/1.4.Sato_san/002.jpg"
+            },
+            {
+              "filename": "003.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.4.Sato_san/003.jpg"
             }
           ]
         },
@@ -968,6 +850,174 @@ window.PHOTOS_INDEX = {
             {
               "filename": "150.jpg",
               "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/150.jpg"
+            },
+            {
+              "filename": "151.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/151.jpg"
+            },
+            {
+              "filename": "152.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/152.jpg"
+            },
+            {
+              "filename": "153.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/153.jpg"
+            },
+            {
+              "filename": "154.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/154.jpg"
+            },
+            {
+              "filename": "155.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/155.jpg"
+            },
+            {
+              "filename": "156.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/156.jpg"
+            },
+            {
+              "filename": "157.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/157.jpg"
+            },
+            {
+              "filename": "158.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/158.jpg"
+            },
+            {
+              "filename": "159.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/159.jpg"
+            },
+            {
+              "filename": "160.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/160.jpg"
+            },
+            {
+              "filename": "161.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/161.jpg"
+            },
+            {
+              "filename": "162.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/162.jpg"
+            },
+            {
+              "filename": "163.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/163.jpg"
+            },
+            {
+              "filename": "164.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/164.jpg"
+            },
+            {
+              "filename": "165.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/165.jpg"
+            },
+            {
+              "filename": "166.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/166.jpg"
+            },
+            {
+              "filename": "167.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/167.jpg"
+            },
+            {
+              "filename": "168.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/168.jpg"
+            },
+            {
+              "filename": "169.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/169.jpg"
+            },
+            {
+              "filename": "170.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/170.jpg"
+            },
+            {
+              "filename": "171.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/171.jpg"
+            },
+            {
+              "filename": "172.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/172.jpg"
+            },
+            {
+              "filename": "173.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/173.jpg"
+            },
+            {
+              "filename": "174.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/174.jpg"
+            },
+            {
+              "filename": "175.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/175.jpg"
+            },
+            {
+              "filename": "176.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/176.jpg"
+            },
+            {
+              "filename": "177.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/177.jpg"
+            },
+            {
+              "filename": "178.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/178.jpg"
+            },
+            {
+              "filename": "179.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/179.jpg"
+            },
+            {
+              "filename": "180.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/180.jpg"
+            },
+            {
+              "filename": "181.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/181.jpg"
+            },
+            {
+              "filename": "182.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/182.jpg"
+            },
+            {
+              "filename": "183.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/183.jpg"
+            },
+            {
+              "filename": "184.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/184.jpg"
+            },
+            {
+              "filename": "185.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/185.jpg"
+            },
+            {
+              "filename": "186.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/186.jpg"
+            },
+            {
+              "filename": "187.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/187.jpg"
+            },
+            {
+              "filename": "188.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/188.jpg"
+            },
+            {
+              "filename": "189.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/189.jpg"
+            },
+            {
+              "filename": "190.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/190.jpg"
+            },
+            {
+              "filename": "191.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/191.jpg"
+            },
+            {
+              "filename": "192.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.5.全体歓談/192.jpg"
             }
           ]
         },
@@ -1519,6 +1569,19 @@ window.PHOTOS_INDEX = {
           ]
         },
         {
+          "name": "1.7.Club Group/Badminton",
+          "photos": [
+            {
+              "filename": "001.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Badminton/001.jpg"
+            },
+            {
+              "filename": "002.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Badminton/002.jpg"
+            }
+          ]
+        },
+        {
           "name": "1.7.Club Group/Basketball",
           "photos": [
             {
@@ -1536,15 +1599,15 @@ window.PHOTOS_INDEX = {
           ]
         },
         {
-          "name": "1.7.Club Group/Badminton",
+          "name": "1.7.Club Group/Soft Tennis",
           "photos": [
             {
               "filename": "001.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Badminton/001.jpg"
+              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Soft Tennis/001.jpg"
             },
             {
               "filename": "002.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Badminton/002.jpg"
+              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Soft Tennis/002.jpg"
             }
           ]
         },
@@ -1566,19 +1629,6 @@ window.PHOTOS_INDEX = {
             {
               "filename": "004.jpg",
               "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Wind/004.jpg"
-            }
-          ]
-        },
-        {
-          "name": "1.7.Club Group/Soft Tennis",
-          "photos": [
-            {
-              "filename": "001.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Soft Tennis/001.jpg"
-            },
-            {
-              "filename": "002.jpg",
-              "src": "photo_data_web/1.1次会・2次会/1.7.Club Group/Soft Tennis/002.jpg"
             }
           ]
         },
@@ -1885,7 +1935,6 @@ window.PHOTOS_INDEX = {
               "filename": "075.jpg",
               "src": "photo_data_web/1.1次会・2次会/1.8.Kato_san_&_Companies/075.jpg"
             }
-
           ]
         },
         {
@@ -1922,18 +1971,142 @@ window.PHOTOS_INDEX = {
             {
               "filename": "008.jpg",
               "src": "photo_data_web/1.1次会・2次会/1.9.集合写真/008.jpg"
+            },
+            {
+              "filename": "009.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.9.集合写真/009.jpg"
+            }
+          ]
+        },
+        {
+          "name": "1.10.幹事チーム",
+          "photos": [
+            {
+              "filename": "001.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/001.jpg"
+            },
+            {
+              "filename": "002.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/002.jpg"
+            },
+            {
+              "filename": "003.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/003.jpg"
+            },
+            {
+              "filename": "004.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/004.jpg"
+            },
+            {
+              "filename": "005.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/005.jpg"
+            },
+            {
+              "filename": "006.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/006.jpg"
+            },
+            {
+              "filename": "007.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/007.jpg"
+            },
+            {
+              "filename": "008.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/008.jpg"
+            },
+            {
+              "filename": "009.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/009.jpg"
+            },
+            {
+              "filename": "010.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/010.jpg"
+            },
+            {
+              "filename": "011.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/011.jpg"
+            },
+            {
+              "filename": "012.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/012.jpg"
+            },
+            {
+              "filename": "013.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/013.jpg"
+            },
+            {
+              "filename": "014.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/014.jpg"
+            },
+            {
+              "filename": "015.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/015.jpg"
+            },
+            {
+              "filename": "016.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/016.jpg"
+            },
+            {
+              "filename": "017.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/017.jpg"
+            },
+            {
+              "filename": "018.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/018.jpg"
+            },
+            {
+              "filename": "019.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/019.jpg"
+            },
+            {
+              "filename": "020.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/020.jpg"
+            },
+            {
+              "filename": "021.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/021.jpg"
+            },
+            {
+              "filename": "022.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/022.jpg"
+            },
+            {
+              "filename": "023.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/023.jpg"
+            },
+            {
+              "filename": "024.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/024.jpg"
+            },
+            {
+              "filename": "025.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/025.jpg"
+            },
+            {
+              "filename": "026.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/026.jpg"
+            },
+            {
+              "filename": "027.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/027.jpg"
+            },
+            {
+              "filename": "028.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/028.jpg"
+            },
+            {
+              "filename": "029.jpg",
+              "src": "photo_data_web/1.1次会・2次会/1.10.幹事チーム/029.jpg"
             }
           ]
         }
-      ],
-      "total": 427
+      ]
     },
     "2.3次会": {
       "title": "2.3次会",
       "displayTitle": "3次会",
       "groups": [
         {
-          "name": "3次会",
+          "name": "2.3次会",
           "photos": [
             {
               "filename": "001.jpg",
@@ -2033,15 +2206,14 @@ window.PHOTOS_INDEX = {
             }
           ]
         }
-      ],
-      "total": 24
+      ]
     },
     "3.4次会": {
       "title": "3.4次会",
       "displayTitle": "4次会",
       "groups": [
         {
-          "name": "4次会",
+          "name": "3.4次会",
           "photos": [
             {
               "filename": "001.jpg",
@@ -2073,208 +2245,26 @@ window.PHOTOS_INDEX = {
             }
           ]
         }
-      ],
-      "total": 7
+      ]
     },
     "4.新着(未分類)": {
       "title": "4.新着(未分類)",
       "displayTitle": "新着(未分類)",
       "groups": [
         {
-          "name": "新着(未分類)",
+          "name": "4.新着(未分類)",
           "photos": [
-            {
-              "filename": "001.jpg",
-              "src": "photo_data_web/4.新着(未分類)/001.jpg"
-            },
-            {
-              "filename": "002.jpg",
-              "src": "photo_data_web/4.新着(未分類)/002.jpg"
-            },
-            {
-              "filename": "003.jpg",
-              "src": "photo_data_web/4.新着(未分類)/003.jpg"
-            },
-            {
-              "filename": "004.jpg",
-              "src": "photo_data_web/4.新着(未分類)/004.jpg"
-            },
             {
               "filename": "005.jpg",
               "src": "photo_data_web/4.新着(未分類)/005.jpg"
             },
             {
-              "filename": "006.jpg",
-              "src": "photo_data_web/4.新着(未分類)/006.jpg"
-            },
-            {
-              "filename": "007.jpg",
-              "src": "photo_data_web/4.新着(未分類)/007.jpg"
-            },
-            {
-              "filename": "008.jpg",
-              "src": "photo_data_web/4.新着(未分類)/008.jpg"
-            },
-            {
-              "filename": "009.jpg",
-              "src": "photo_data_web/4.新着(未分類)/009.jpg"
-            },
-            {
-              "filename": "010.jpg",
-              "src": "photo_data_web/4.新着(未分類)/010.jpg"
-            },
-            {
-              "filename": "011.jpg",
-              "src": "photo_data_web/4.新着(未分類)/011.jpg"
-            },
-            {
-              "filename": "012.jpg",
-              "src": "photo_data_web/4.新着(未分類)/012.jpg"
-            },
-            {
-              "filename": "013.jpg",
-              "src": "photo_data_web/4.新着(未分類)/013.jpg"
-            },
-            {
-              "filename": "014.jpg",
-              "src": "photo_data_web/4.新着(未分類)/014.jpg"
-            },
-            {
-              "filename": "015.jpg",
-              "src": "photo_data_web/4.新着(未分類)/015.jpg"
-            },
-            {
-              "filename": "016.jpg",
-              "src": "photo_data_web/4.新着(未分類)/016.jpg"
-            },
-            {
-              "filename": "017.jpg",
-              "src": "photo_data_web/4.新着(未分類)/017.jpg"
-            },
-            {
-              "filename": "018.jpg",
-              "src": "photo_data_web/4.新着(未分類)/018.jpg"
-            },
-            {
-              "filename": "019.jpg",
-              "src": "photo_data_web/4.新着(未分類)/019.jpg"
-            },
-            {
-              "filename": "020.jpg",
-              "src": "photo_data_web/4.新着(未分類)/020.jpg"
-            },
-            {
-              "filename": "021.jpg",
-              "src": "photo_data_web/4.新着(未分類)/021.jpg"
-            },
-            {
-              "filename": "022.jpg",
-              "src": "photo_data_web/4.新着(未分類)/022.jpg"
-            },
-            {
-              "filename": "023.jpg",
-              "src": "photo_data_web/4.新着(未分類)/023.jpg"
-            },
-            {
-              "filename": "024.jpg",
-              "src": "photo_data_web/4.新着(未分類)/024.jpg"
-            },
-            {
-              "filename": "025.jpg",
-              "src": "photo_data_web/4.新着(未分類)/025.jpg"
-            },
-            {
-              "filename": "026.jpg",
-              "src": "photo_data_web/4.新着(未分類)/026.jpg"
-            },
-            {
-              "filename": "027.jpg",
-              "src": "photo_data_web/4.新着(未分類)/027.jpg"
-            },
-            {
-              "filename": "028.jpg",
-              "src": "photo_data_web/4.新着(未分類)/028.jpg"
-            },
-            {
-              "filename": "029.jpg",
-              "src": "photo_data_web/4.新着(未分類)/029.jpg"
-            },
-            {
               "filename": "030.jpg",
               "src": "photo_data_web/4.新着(未分類)/030.jpg"
-            },
-            {
-              "filename": "031.jpg",
-              "src": "photo_data_web/4.新着(未分類)/031.jpg"
-            },
-            {
-              "filename": "032.jpg",
-              "src": "photo_data_web/4.新着(未分類)/032.jpg"
-            },
-            {
-              "filename": "033.jpg",
-              "src": "photo_data_web/4.新着(未分類)/033.jpg"
-            },
-            {
-              "filename": "034.jpg",
-              "src": "photo_data_web/4.新着(未分類)/034.jpg"
-            },
-            {
-              "filename": "035.jpg",
-              "src": "photo_data_web/4.新着(未分類)/035.jpg"
-            },
-            {
-              "filename": "036.jpg",
-              "src": "photo_data_web/4.新着(未分類)/036.jpg"
-            },
-            {
-              "filename": "037.jpg",
-              "src": "photo_data_web/4.新着(未分類)/037.jpg"
-            },
-            {
-              "filename": "038.jpg",
-              "src": "photo_data_web/4.新着(未分類)/038.jpg"
-            },
-            {
-              "filename": "039.jpg",
-              "src": "photo_data_web/4.新着(未分類)/039.jpg"
-            },
-            {
-              "filename": "040.jpg",
-              "src": "photo_data_web/4.新着(未分類)/040.jpg"
-            },
-            {
-              "filename": "041.jpg",
-              "src": "photo_data_web/4.新着(未分類)/041.jpg"
-            },
-            {
-              "filename": "042.jpg",
-              "src": "photo_data_web/4.新着(未分類)/042.jpg"
-            },
-            {
-              "filename": "043.jpg",
-              "src": "photo_data_web/4.新着(未分類)/043.jpg"
-            },
-            {
-              "filename": "044.jpg",
-              "src": "photo_data_web/4.新着(未分類)/044.jpg"
-            },
-            {
-              "filename": "045.jpg",
-              "src": "photo_data_web/4.新着(未分類)/045.jpg"
-            },
-            {
-              "filename": "046.jpg",
-              "src": "photo_data_web/4.新着(未分類)/046.jpg"
-            },
-            {
-              "filename": "047.jpg",
-              "src": "photo_data_web/4.新着(未分類)/047.jpg"
             }
           ]
         }
-      ],
-      "total": 47
+      ]
     }
   }
 };
